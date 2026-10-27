@@ -12,12 +12,13 @@
 
     EXPORT main         ; we need this for the linker - In this context it set the entry point,too
 
-ConstByteA  EQU 0xaffe
+;*ConstByteA  EQU 0xaffe
     
 ;* We need some data to work on
     AREA DATA, DATA, align=2    
 VariableA   DCW 0xbeef
 VariableB   DCW 0x1234
+VariableC   DCW 0xaffe
 
 ;* We need minimal memory setup of InRootSection placed in Code Section 
     AREA  |.text|, CODE, READONLY, ALIGN = 3    
@@ -33,8 +34,12 @@ main
     strh    R2,[R0]         ; Anw06 
     
 ;* const in var
-    mov     R5,#ConstByteA  ; Anw07
-    strh    R5,[R0]         ; Anw08
+    ldr     R0,=VariableC  ; Anw07
+    ldrb    R2,[R0]        ;
+    ldrb    R3,[R0, #1]    ;
+    lsl     R2, #8         ;
+    orr     R2, R3         ;
+    strh    R2,[R0]        ; Anw08
     
 ;* Change value from x1234 to x4321
     ldr     R1,=VariableB   ; Anw09
